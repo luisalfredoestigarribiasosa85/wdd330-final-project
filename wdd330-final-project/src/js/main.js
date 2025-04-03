@@ -1,8 +1,18 @@
 import "../css/style.css";
-import { fetchData } from "./data";
+import { loadHeaderFooter, loadMovies } from "./utils.mjs";
+import { displayMovieDetails, displayAdditionalMovieDetails, displayMovieTrailer } from "./info.mjs";
 
-document.querySelector("#app").innerHTML = `
-    <h1>Hello World</h1>
 
-`;
-fetchData()
+// Ejecutar solo en la página principal
+if (!window.location.pathname.includes("info_page")) {
+    loadMovies();
+    loadHeaderFooter();
+}
+
+// Ejecutar solo en info_page/index.html
+if (window.location.pathname.includes("info_page")) {
+    displayMovieDetails();
+    displayAdditionalMovieDetails();
+    displayMovieTrailer();
+    loadHeaderFooter();
+}
