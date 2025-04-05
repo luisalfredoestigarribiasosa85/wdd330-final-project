@@ -6,14 +6,19 @@ import {
   displayMovieTrailer,
 } from "./info.mjs";
 
+// Versión más robusta para detectar si estamos en info.html
+const isInfoPage =
+  window.location.pathname.includes("info") ||
+  window.location.href.includes("info.html");
+
 // Ejecutar solo en la página principal
-if (!window.location.pathname.includes("index")) {
+if (!isInfoPage) {
   loadMovies();
   loadHeaderFooter();
 }
 
-// Ejecutar solo en info_page/index.html
-if (window.location.pathname.includes("info")) {
+// Ejecutar solo en info.html
+if (isInfoPage) {
   displayMovieDetails();
   displayAdditionalMovieDetails();
   displayMovieTrailer();
