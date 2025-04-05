@@ -87,7 +87,7 @@ const displayMovies = (movies) => {
     movies.forEach(movie => {
         const movieElement = document.getElementById(`movie-${movie.id}`);
         movieElement.addEventListener('click', () => {
-            window.location.href = `/src/info_page/index.html?id=${movie.id}`;
+            window.location.href = `./src/info_page/index.html?id=${movie.id}`;
         });
     });
 };
