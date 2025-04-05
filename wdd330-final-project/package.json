@@ -20,6 +20,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "jest": "^29.7.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "wdd330-final-project": "file:"
   }
 }

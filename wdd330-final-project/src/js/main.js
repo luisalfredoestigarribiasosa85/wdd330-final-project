@@ -1,18 +1,21 @@
 import "../css/style.css";
 import { loadHeaderFooter, loadMovies } from "./utils.mjs";
-import { displayMovieDetails, displayAdditionalMovieDetails, displayMovieTrailer } from "./info.mjs";
-
+import {
+  displayMovieDetails,
+  displayAdditionalMovieDetails,
+  displayMovieTrailer,
+} from "./info.mjs";
 
 // Ejecutar solo en la página principal
 if (!window.location.pathname.includes("info_page")) {
-    loadMovies();
-    loadHeaderFooter();
+  loadMovies();
+  loadHeaderFooter();
 }
 
 // Ejecutar solo en info_page/index.html
 if (window.location.pathname.includes("info_page")) {
-    displayMovieDetails();
-    displayAdditionalMovieDetails();
-    displayMovieTrailer();
-    loadHeaderFooter();
+  displayMovieDetails();
+  displayAdditionalMovieDetails();
+  displayMovieTrailer();
+  loadHeaderFooter();
 }
