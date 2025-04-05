@@ -110,7 +110,7 @@ header {
   gap: 20px;
   background-color: #f7f7f7;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   width: 80vw;
   margin: 20px auto;
 }
@@ -122,7 +122,7 @@ header {
   gap: 20px;
   background-color: #f7f7f7;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   width: 80vw;
   margin: 20px auto;
 }
@@ -131,7 +131,7 @@ header {
   padding: 20px;
   background-color: #f7f7f7;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   width: 80vw;
   margin: 20px auto;
 }
