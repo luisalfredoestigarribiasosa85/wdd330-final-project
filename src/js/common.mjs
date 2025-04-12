@@ -1,5 +1,7 @@
 import { loadHeaderFooter } from "./utils.mjs";
-import { fetchRandomMovie } from "./ExternalServices.mjs";
+import ExternalServices from "./ExternalServices.mjs";
+
+const services = new ExternalServices();
 
 // Function to initialize common elements
 export async function initializeCommon() {
@@ -47,7 +49,7 @@ export async function initializeCommon() {
         if (surpriseMeButton) {
             surpriseMeButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                fetchRandomMovie();
+                services.fetchRandomMovie();
             });
         }
     } catch (error) {
