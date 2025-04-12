@@ -102,31 +102,44 @@ const displayMovies = (movies) => {
 
 export async function loadHeaderFooter() {
     try {
-        const headerPath = window.location.href.includes('netlify')
-            ? '/src/partials/header.html'
-            : '/src/partials/header.html';
-        const footerPath = window.location.href.includes('netlify')
-            ? '/src/partials/footer.html'
-            : '/src/partials/footer.html';
+        const headerContainer = document.getElementById("header");
+        const footerContainer = document.getElementById("footer");
 
-        const [headerResponse, footerResponse] = await Promise.all([
-            fetch(headerPath),
-            fetch(footerPath),
-        ]);
-
-        if (!headerResponse.ok || !footerResponse.ok) {
-            throw new Error('Failed to load header or footer');
+        if (!headerContainer || !footerContainer) {
+            console.error('Header or footer container not found');
+            return false;
         }
 
-        const headerHtml = await headerResponse.text();
-        const footerHtml = await footerResponse.text();
+        // Get the base URL for assets
+        const baseUrl = import.meta.env.PROD ? '.' : '';
 
-        document.getElementById('header').innerHTML = headerHtml;
-        document.getElementById('footer').innerHTML = footerHtml;
+        // Load header
+        const headerResponse = await fetch(`${baseUrl}/partials/header.html`);
+        if (!headerResponse.ok) {
+            throw new Error(`Failed to load header: ${headerResponse.status}`);
+        }
+        const headerText = await headerResponse.text();
+        headerContainer.innerHTML = headerText;
+
+        // Load footer
+        const footerResponse = await fetch(`${baseUrl}/partials/footer.html`);
+        if (!footerResponse.ok) {
+            throw new Error(`Failed to load footer: ${footerResponse.status}`);
+        }
+        const footerText = await footerResponse.text();
+        footerContainer.innerHTML = footerText;
+
+        // Add event listener for surprise me button after header is loaded
+        const surpriseMeButton = document.getElementById('surprise-me');
+        if (surpriseMeButton) {
+            console.log('Surprise Me button found');
+        } else {
+            console.log('Surprise Me button not found after header load');
+        }
 
         return true;
     } catch (error) {
-        console.error('Error loading header and footer:', error);
+        console.error('Error in loadHeaderFooter:', error);
         return false;
     }
 }

@@ -13,7 +13,9 @@ export default defineConfig({
         favorites: resolve(__dirname, "favorites.html"),
       },
     },
+    copyPublicDir: true,
   },
+  publicDir: "src",
   server: {
     port: 3000,
   },
@@ -23,5 +25,4 @@ export default defineConfig({
     },
     extensions: [".js", ".mjs", ".json"],
   },
-  publicDir: "public",
 });

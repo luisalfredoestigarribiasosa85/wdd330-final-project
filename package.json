@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --emptyOutDir",
+    "build": "vite build --emptyOutDir && node copy-partials.js",
     "preview": "vite preview",
     "lint": "eslint *.js src/**/*.js",
     "test": "jest",
@@ -14,6 +14,7 @@
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "eslint": "^9.23.0",
+    "fs-extra": "^11.3.0",
     "globals": "^16.0.0",
     "vite": "^6.2.0"
   },
