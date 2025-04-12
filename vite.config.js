@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export default defineConfig({
   base: "/",
@@ -7,12 +8,19 @@ export default defineConfig({
     assetsDir: "assets",
     rollupOptions: {
       input: {
-        main: "./index.html",
-        info: "./info.html",
+        main: resolve(__dirname, "index.html"),
+        info: resolve(__dirname, "info.html"),
+        favorites: resolve(__dirname, "favorites.html"),
       },
     },
   },
   server: {
     port: 3000,
+  },
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+    extensions: [".js", ".mjs", ".json"],
   },
 });
