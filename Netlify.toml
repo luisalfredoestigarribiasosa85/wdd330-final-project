@@ -3,6 +3,11 @@
   publish = "dist"
 
 [[redirects]]
+  from = "/src/partials/*"
+  to = "/src/partials/:splat"
+  status = 200
+
+[[redirects]]
   from = "/info*"
   to = "/info.html"
   status = 200

@@ -23,4 +23,5 @@ export default defineConfig({
     },
     extensions: [".js", ".mjs", ".json"],
   },
+  publicDir: "public",
 });

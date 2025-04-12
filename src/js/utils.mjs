@@ -100,47 +100,35 @@ const displayMovies = (movies) => {
     });
 };
 
-export function loadHeaderFooter() {
-    const headerContainer = document.getElementById("header");
-    const footerContainer = document.getElementById("footer");
+export async function loadHeaderFooter() {
+    try {
+        const headerPath = window.location.href.includes('netlify')
+            ? '/src/partials/header.html'
+            : '/src/partials/header.html';
+        const footerPath = window.location.href.includes('netlify')
+            ? '/src/partials/footer.html'
+            : '/src/partials/footer.html';
 
-    // Create an array to hold our promises
-    const promises = [];
+        const [headerResponse, footerResponse] = await Promise.all([
+            fetch(headerPath),
+            fetch(footerPath),
+        ]);
 
-    if (headerContainer) {
-        const headerPromise = fetch("/src/partials/header.html")
-            .then(response => response.text())
-            .then(data => {
-                headerContainer.innerHTML = data;
-                // Add event listener after header content is loaded
-                const surpriseMeButton = document.getElementById('surprise-me');
-                if (surpriseMeButton) {
-                    surpriseMeButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        console.log('Surprise Me button clicked');
-                        fetchRandomMovie();
-                    });
-                    console.log('Surprise Me button listener added');
-                } else {
-                    console.error('Surprise Me button not found after header load');
-                }
-            })
-            .catch(error => console.error("Error loading header:", error));
-        promises.push(headerPromise);
+        if (!headerResponse.ok || !footerResponse.ok) {
+            throw new Error('Failed to load header or footer');
+        }
+
+        const headerHtml = await headerResponse.text();
+        const footerHtml = await footerResponse.text();
+
+        document.getElementById('header').innerHTML = headerHtml;
+        document.getElementById('footer').innerHTML = footerHtml;
+
+        return true;
+    } catch (error) {
+        console.error('Error loading header and footer:', error);
+        return false;
     }
-
-    if (footerContainer) {
-        const footerPromise = fetch("/src/partials/footer.html")
-            .then(response => response.text())
-            .then(data => {
-                footerContainer.innerHTML = data;
-            })
-            .catch(error => console.error("Error loading footer:", error));
-        promises.push(footerPromise);
-    }
-
-    // Return a promise that resolves when all promises are complete
-    return Promise.all(promises);
 }
 
 // Function to fetch random movie
