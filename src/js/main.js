@@ -5,7 +5,7 @@ import {
   displayAdditionalMovieDetails,
   displayMovieTrailer,
 } from "./info.mjs";
-import { initializeCommon } from './common.mjs';
+import { initializeCommon } from "./common.mjs";
 
 // Initialize common elements
 initializeCommon();
@@ -14,33 +14,39 @@ initializeCommon();
 document.addEventListener("DOMContentLoaded", () => {
   loadHeaderFooter().then(() => {
     // Add event listener after header is loaded
-    const hamburger = document.getElementById('hamburger');
-    const nav = document.querySelector('.nav-menu');
+    const hamburger = document.getElementById("hamburger");
+    const nav = document.querySelector(".nav-menu");
 
     if (hamburger && nav) {
-      hamburger.addEventListener('click', (e) => {
+      hamburger.addEventListener("click", (e) => {
         e.stopPropagation();
-        hamburger.classList.toggle('active');
-        nav.classList.toggle('show');
+        hamburger.classList.toggle("active");
+        nav.classList.toggle("show");
         // Prevent scrolling when menu is open
-        document.body.style.overflow = nav.classList.contains('show') ? 'hidden' : '';
+        document.body.style.overflow = nav.classList.contains("show")
+          ? "hidden"
+          : "";
       });
 
       // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('show')) {
-          nav.classList.remove('show');
-          hamburger.classList.remove('active');
-          document.body.style.overflow = '';
+      document.addEventListener("click", (e) => {
+        if (
+          !nav.contains(e.target) &&
+          !hamburger.contains(e.target) &&
+          nav.classList.contains("show")
+        ) {
+          nav.classList.remove("show");
+          hamburger.classList.remove("active");
+          document.body.style.overflow = "";
         }
       });
 
       // Close menu when clicking on a link
-      nav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          nav.classList.remove('show');
-          hamburger.classList.remove('active');
-          document.body.style.overflow = '';
+      nav.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          nav.classList.remove("show");
+          hamburger.classList.remove("active");
+          document.body.style.overflow = "";
         });
       });
     }
@@ -59,11 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ejecutar solo en info.html
   if (isInfoPage) {
     const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get('id');
+    const movieId = urlParams.get("id");
 
     if (!movieId) {
-      console.error('No movie ID provided');
-      const mainContent = document.querySelector('.movie-details-container');
+      console.error("No movie ID provided");
+      const mainContent = document.querySelector(".movie-details-container");
       if (mainContent) {
         mainContent.innerHTML = `
           <div class="error-message">
@@ -80,10 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
     Promise.all([
       displayMovieDetails(movieId),
       displayAdditionalMovieDetails(movieId),
-      displayMovieTrailer(movieId)
-    ]).catch(error => {
-      console.error('Error displaying movie details:', error);
-      const mainContent = document.querySelector('.movie-details-container');
+      displayMovieTrailer(movieId),
+    ]).catch((error) => {
+      console.error("Error displaying movie details:", error);
+      const mainContent = document.querySelector(".movie-details-container");
       if (mainContent) {
         mainContent.innerHTML = `
           <div class="error-message">
@@ -97,9 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Add event listener for surprise me button
-  const surpriseMeButton = document.getElementById('surprise-me');
+  const surpriseMeButton = document.getElementById("surprise-me");
   if (surpriseMeButton) {
-    surpriseMeButton.addEventListener('click', (e) => {
+    surpriseMeButton.addEventListener("click", (e) => {
       e.preventDefault();
       fetchRandomMovie();
     });
@@ -107,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Favorites Management
-const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
 function toggleFavorite(movieId) {
   const index = favorites.indexOf(movieId);
@@ -116,27 +122,27 @@ function toggleFavorite(movieId) {
   } else {
     favorites.push(movieId);
   }
-  localStorage.setItem('favorites', JSON.stringify(favorites));
+  localStorage.setItem("favorites", JSON.stringify(favorites));
   updateFavoriteButtons();
 }
 
 function updateFavoriteButtons() {
-  document.querySelectorAll('.favorite-button').forEach(button => {
+  document.querySelectorAll(".favorite-button").forEach((button) => {
     const movieId = button.dataset.movieId;
     if (favorites.includes(movieId)) {
-      button.classList.add('active');
-      button.textContent = 'Remove from Favorites';
+      button.classList.add("active");
+      button.textContent = "Remove from Favorites";
     } else {
-      button.classList.remove('active');
-      button.textContent = 'Add to Favorites';
+      button.classList.remove("active");
+      button.textContent = "Add to Favorites";
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   updateFavoriteButtons();
-  document.querySelectorAll('.favorite-button').forEach(button => {
-    button.addEventListener('click', () => {
+  document.querySelectorAll(".favorite-button").forEach((button) => {
+    button.addEventListener("click", () => {
       toggleFavorite(button.dataset.movieId);
     });
   });
