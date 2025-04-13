@@ -3,8 +3,8 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/partials/*"
-  to = "/partials/:splat"
+  from = "/src/partials/*"
+  to = "/src/partials/:splat"
   status = 200
   force = true
 

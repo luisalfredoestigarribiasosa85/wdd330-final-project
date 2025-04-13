@@ -110,11 +110,11 @@ export async function loadHeaderFooter() {
             return false;
         }
 
-        // Get the base URL for assets
-        const baseUrl = import.meta.env.PROD ? '.' : '';
+        // Determine the correct path based on the environment
+        const basePath = window.location.pathname.includes('index.html') ? '.' : '..';
 
         // Load header
-        const headerResponse = await fetch(`${baseUrl}/partials/header.html`);
+        const headerResponse = await fetch(`${basePath}/src/partials/header.html`);
         if (!headerResponse.ok) {
             throw new Error(`Failed to load header: ${headerResponse.status}`);
         }
@@ -122,7 +122,7 @@ export async function loadHeaderFooter() {
         headerContainer.innerHTML = headerText;
 
         // Load footer
-        const footerResponse = await fetch(`${baseUrl}/partials/footer.html`);
+        const footerResponse = await fetch(`${basePath}/src/partials/footer.html`);
         if (!footerResponse.ok) {
             throw new Error(`Failed to load footer: ${footerResponse.status}`);
         }
