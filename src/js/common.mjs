@@ -1,6 +1,5 @@
 import { fetchRandomMovie } from "./utils.mjs";
 
-// Function to load header and footer
 async function loadHeaderFooter() {
     try {
         const headerContainer = document.getElementById("header");
@@ -12,7 +11,7 @@ async function loadHeaderFooter() {
         }
 
         // Load header
-        const headerResponse = await fetch('/src/partials/header.html');
+        const headerResponse = await fetch('/partials/header.html');
         if (!headerResponse.ok) {
             throw new Error(`Failed to load header: ${headerResponse.status}`);
         }
@@ -20,7 +19,7 @@ async function loadHeaderFooter() {
         headerContainer.innerHTML = headerText;
 
         // Load footer
-        const footerResponse = await fetch('/src/partials/footer.html');
+        const footerResponse = await fetch('/partials/footer.html');
         if (!footerResponse.ok) {
             throw new Error(`Failed to load footer: ${footerResponse.status}`);
         }
@@ -34,7 +33,6 @@ async function loadHeaderFooter() {
     }
 }
 
-// Function to initialize common elements
 export async function initializeCommon() {
     try {
         // Load header and footer
@@ -99,4 +97,4 @@ export async function initializeCommon() {
     } catch (error) {
         console.error('Error initializing common functionality:', error);
     }
-} 
+}
