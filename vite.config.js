@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
-  base: "./",
+  base: "/",
   build: {
     outDir: "dist",
     assetsDir: "assets",
@@ -13,9 +13,7 @@ export default defineConfig({
         favorites: resolve(__dirname, "favorites.html"),
       },
     },
-    copyPublicDir: true,
   },
-  publicDir: "src",
   server: {
     port: 3000,
   },
@@ -23,6 +21,5 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "src"),
     },
-    extensions: [".js", ".mjs", ".json"],
   },
 });

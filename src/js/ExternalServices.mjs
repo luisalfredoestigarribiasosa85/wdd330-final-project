@@ -21,8 +21,13 @@ export default class ExternalServices {
     async fetchRandomMovie() {
         try {
             console.log('Starting random movie fetch...');
+            const apiKey = import.meta.env.VITE_API_MOVIES;
+            if (!apiKey) {
+                throw new Error('API key not found');
+            }
+
             // First, get total number of pages
-            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_API_MOVIES}&sort_by=popularity.desc`);
+            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=popularity.desc`);
             if (!response.ok) throw new Error('Failed to fetch movie data');
             const data = await response.json();
             console.log('Got initial movie data');
@@ -32,7 +37,7 @@ export default class ExternalServices {
             console.log('Selected random page:', randomPage);
 
             // Fetch movies from random page
-            const moviesResponse = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${import.meta.env.VITE_API_MOVIES}&sort_by=popularity.desc&page=${randomPage}`);
+            const moviesResponse = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=popularity.desc&page=${randomPage}`);
             if (!moviesResponse.ok) throw new Error('Failed to fetch random movies');
             const moviesData = await moviesResponse.json();
             console.log('Got movies from random page');
@@ -43,11 +48,7 @@ export default class ExternalServices {
             console.log('Selected random movie:', randomMovie.title, 'with ID:', randomMovie.id);
 
             // Redirect to the random movie's info page
-            const currentPath = window.location.pathname;
-            const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-            const infoUrl = `${basePath}info.html?id=${randomMovie.id}`;
-            console.log('Redirecting to:', infoUrl);
-            window.location.href = infoUrl;
+            window.location.href = `info.html?id=${randomMovie.id}`;
         } catch (error) {
             console.error('Error fetching random movie:', error);
             alert('Failed to get a random movie. Please try again.');

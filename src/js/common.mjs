@@ -1,7 +1,38 @@
-import { loadHeaderFooter } from "./utils.mjs";
-import ExternalServices from "./ExternalServices.mjs";
+import { fetchRandomMovie } from "./utils.mjs";
 
-const services = new ExternalServices();
+// Function to load header and footer
+async function loadHeaderFooter() {
+    try {
+        const headerContainer = document.getElementById("header");
+        const footerContainer = document.getElementById("footer");
+
+        if (!headerContainer || !footerContainer) {
+            console.error('Header or footer container not found');
+            return false;
+        }
+
+        // Load header
+        const headerResponse = await fetch('/src/partials/header.html');
+        if (!headerResponse.ok) {
+            throw new Error(`Failed to load header: ${headerResponse.status}`);
+        }
+        const headerText = await headerResponse.text();
+        headerContainer.innerHTML = headerText;
+
+        // Load footer
+        const footerResponse = await fetch('/src/partials/footer.html');
+        if (!footerResponse.ok) {
+            throw new Error(`Failed to load footer: ${footerResponse.status}`);
+        }
+        const footerText = await footerResponse.text();
+        footerContainer.innerHTML = footerText;
+
+        return true;
+    } catch (error) {
+        console.error('Error in loadHeaderFooter:', error);
+        return false;
+    }
+}
 
 // Function to initialize common elements
 export async function initializeCommon() {
@@ -21,7 +52,7 @@ export async function initializeCommon() {
             hamburger.addEventListener('click', () => {
                 hamburger.classList.toggle('active');
                 nav.classList.toggle('active');
-                document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+                document.body.classList.toggle('menu-open');
             });
 
             // Close menu when clicking outside
@@ -29,33 +60,43 @@ export async function initializeCommon() {
                 if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
                     hamburger.classList.remove('active');
                     nav.classList.remove('active');
-                    document.body.style.overflow = '';
+                    document.body.classList.remove('menu-open');
                 }
             });
 
-            // Close menu when clicking on a link
-            const navLinks = nav.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
+            // Close menu when clicking on a link or button
+            const navItems = nav.querySelectorAll('a, button');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
                     hamburger.classList.remove('active');
                     nav.classList.remove('active');
-                    document.body.style.overflow = '';
+                    document.body.classList.remove('menu-open');
                 });
             });
         }
 
+        // Wait a short moment for the DOM to update after loading the header
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         // Add event listener for the "surprise me" button
         const surpriseMeButton = document.getElementById('surprise-me');
         if (surpriseMeButton) {
-            surpriseMeButton.addEventListener('click', (e) => {
+            console.log('Setting up surprise me button');
+            surpriseMeButton.addEventListener('click', async (e) => {
                 e.preventDefault();
-                services.fetchRandomMovie();
+                e.stopPropagation();
+                console.log('Surprise me button clicked');
+                try {
+                    await fetchRandomMovie();
+                } catch (error) {
+                    console.error('Error fetching random movie:', error);
+                    alert('Failed to get a random movie. Please try again.');
+                }
             });
+        } else {
+            console.warn('Surprise me button not found - this is expected on some pages');
         }
     } catch (error) {
         console.error('Error initializing common functionality:', error);
     }
-}
-
-// Initialize common elements when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeCommon); 
+} 

@@ -240,48 +240,26 @@ export const displayAdditionalMovieDetails = async (movieId) => {
     }
 };
 
+// Get movie ID from URL parameters
+function getMovieId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('id');
+    if (!movieId) {
+        console.error('No movie ID provided');
+        // Redirect to home page if no movie ID is provided
+        window.location.href = 'index.html';
+    }
+    return movieId;
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Initialize common functionality
-        await initializeCommon();
-
-        // Get movie ID from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('id');
-
-        if (!movieId) {
-            console.error('No movie ID provided');
-            const mainContent = document.querySelector('.movie-details-container');
-            if (mainContent) {
-                mainContent.innerHTML = `
-                    <div class="error-message">
-                        <h2>Error</h2>
-                        <p>No movie ID provided. Please go back to the home page and select a movie.</p>
-                        <a href="index.html" class="btn btn-primary">Go to Home Page</a>
-                    </div>
-                `;
-            }
-            return;
-        }
-
-        // Display movie details and trailer
-        await Promise.all([
-            displayMovieDetails(movieId),
-            displayMovieTrailer(movieId)
-        ]);
-    } catch (error) {
-        console.error('Error initializing page:', error);
-        const mainContent = document.querySelector('.movie-details-container');
-        if (mainContent) {
-            mainContent.innerHTML = `
-                <div class="error-message">
-                    <h2>Error</h2>
-                    <p>An error occurred while loading the page. Please try again later.</p>
-                    <a href="index.html" class="btn btn-primary">Go to Home Page</a>
-                </div>
-            `;
-        }
+    const movieId = getMovieId();
+    if (movieId) {
+        await displayMovieDetails(movieId);
+        await displayMovieTrailer(movieId);
+        await displayAdditionalMovieDetails(movieId);
     }
+    await initializeCommon();
 });
 

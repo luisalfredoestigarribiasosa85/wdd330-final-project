@@ -1,119 +1,10 @@
 import "../css/style.css";
-import { loadHeaderFooter, loadMovies, fetchRandomMovie } from "./utils.mjs";
-import {
-  displayMovieDetails,
-  displayAdditionalMovieDetails,
-  displayMovieTrailer,
-} from "./info.mjs";
+import { loadMovies, searchMovies } from "./utils.mjs";
 import { initializeCommon } from "./common.mjs";
-
-// Initialize common elements
-initializeCommon();
-
-// Load header and footer on all pages
-document.addEventListener("DOMContentLoaded", () => {
-  loadHeaderFooter().then(() => {
-    // Add event listener after header is loaded
-    const hamburger = document.getElementById("hamburger");
-    const nav = document.querySelector(".nav-menu");
-
-    if (hamburger && nav) {
-      hamburger.addEventListener("click", (e) => {
-        e.stopPropagation();
-        hamburger.classList.toggle("active");
-        nav.classList.toggle("show");
-        // Prevent scrolling when menu is open
-        document.body.style.overflow = nav.classList.contains("show")
-          ? "hidden"
-          : "";
-      });
-
-      // Close menu when clicking outside
-      document.addEventListener("click", (e) => {
-        if (
-          !nav.contains(e.target) &&
-          !hamburger.contains(e.target) &&
-          nav.classList.contains("show")
-        ) {
-          nav.classList.remove("show");
-          hamburger.classList.remove("active");
-          document.body.style.overflow = "";
-        }
-      });
-
-      // Close menu when clicking on a link
-      nav.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          nav.classList.remove("show");
-          hamburger.classList.remove("active");
-          document.body.style.overflow = "";
-        });
-      });
-    }
-  });
-
-  // Versión más robusta para detectar si estamos en info.html
-  const isInfoPage =
-    window.location.pathname.includes("info") ||
-    window.location.href.includes("info.html");
-
-  // Ejecutar solo en la página principal
-  if (!isInfoPage && window.location.pathname.includes("index.html")) {
-    loadMovies();
-  }
-
-  // Ejecutar solo en info.html
-  if (isInfoPage) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get("id");
-
-    if (!movieId) {
-      console.error("No movie ID provided");
-      const mainContent = document.querySelector(".movie-details-container");
-      if (mainContent) {
-        mainContent.innerHTML = `
-          <div class="error-message">
-            <h2>Error</h2>
-            <p>No movie ID provided. Please go back to the home page and select a movie.</p>
-            <a href="index.html" class="btn btn-primary">Go to Home Page</a>
-          </div>
-        `;
-      }
-      return;
-    }
-
-    // Display movie details and trailer
-    Promise.all([
-      displayMovieDetails(movieId),
-      displayAdditionalMovieDetails(movieId),
-      displayMovieTrailer(movieId),
-    ]).catch((error) => {
-      console.error("Error displaying movie details:", error);
-      const mainContent = document.querySelector(".movie-details-container");
-      if (mainContent) {
-        mainContent.innerHTML = `
-          <div class="error-message">
-            <h2>Error</h2>
-            <p>An error occurred while loading the movie details. Please try again later.</p>
-            <a href="index.html" class="btn btn-primary">Go to Home Page</a>
-          </div>
-        `;
-      }
-    });
-  }
-
-  // Add event listener for surprise me button
-  const surpriseMeButton = document.getElementById("surprise-me");
-  if (surpriseMeButton) {
-    surpriseMeButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      fetchRandomMovie();
-    });
-  }
-});
 
 // Favorites Management
 const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+let currentPage = 1; // Local page variable
 
 function toggleFavorite(movieId) {
   const index = favorites.indexOf(movieId);
@@ -139,11 +30,126 @@ function updateFavoriteButtons() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateFavoriteButtons();
-  document.querySelectorAll(".favorite-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      toggleFavorite(button.dataset.movieId);
+// Single DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Initialize common elements (header, footer, hamburger menu)
+    await initializeCommon();
+
+    // Check if we're on the info page
+    const isInfoPage = window.location.pathname.includes("info") ||
+      window.location.href.includes("info.html");
+
+    // Handle main page
+    if (!isInfoPage) {
+      try {
+        await loadMovies(currentPage);
+
+        // Setup pagination and search
+        const btnPrevious = document.getElementById("btnPrevious");
+        const btnNext = document.getElementById("btnNext");
+        const inputSearch = document.getElementById("search");
+        const btnSearch = document.getElementById("btnSearch");
+
+        if (btnNext) {
+          btnNext.addEventListener("click", () => {
+            if (currentPage < 1000) {
+              currentPage += 1;
+              loadMovies(currentPage).catch((error) => {
+                console.error("Error loading next page:", error);
+              });
+            }
+          });
+        }
+
+        if (btnPrevious) {
+          btnPrevious.addEventListener("click", () => {
+            if (currentPage > 1) {
+              currentPage -= 1;
+              loadMovies(currentPage).catch((error) => {
+                console.error("Error loading previous page:", error);
+              });
+            }
+          });
+        }
+
+        if (btnSearch) {
+          btnSearch.addEventListener("click", () => {
+            const query = inputSearch.value;
+            if (query) {
+              searchMovies(query, currentPage).catch((error) => {
+                console.error("Error searching movies:", error);
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error in main page initialization:", error);
+        const app = document.getElementById("app");
+        if (app) {
+          app.innerHTML = `
+            <div class="error-message">
+              <h2>Error</h2>
+              <p>Failed to load movies. Please check your internet connection and try again.</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Handle info page
+    if (isInfoPage) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const movieId = urlParams.get("id");
+
+      if (!movieId) {
+        console.error("No movie ID provided");
+        const mainContent = document.querySelector(".movie-details-container");
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div class="error-message">
+              <h2>Error</h2>
+              <p>No movie ID provided. Please go back to the home page and select a movie.</p>
+              <a href="index.html" class="btn btn-primary">Go to Home Page</a>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      try {
+        // Import info page functions only when needed
+        const { displayMovieDetails, displayAdditionalMovieDetails, displayMovieTrailer } = await import("./info.mjs");
+
+        // Display movie details and trailer
+        await Promise.all([
+          displayMovieDetails(movieId),
+          displayAdditionalMovieDetails(movieId),
+          displayMovieTrailer(movieId),
+        ]);
+      } catch (error) {
+        console.error("Error displaying movie details:", error);
+        const mainContent = document.querySelector(".movie-details-container");
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div class="error-message">
+              <h2>Error</h2>
+              <p>Failed to load movie details. Please try again later.</p>
+              <a href="index.html" class="btn btn-primary">Go to Home Page</a>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Setup favorites
+    updateFavoriteButtons();
+    document.querySelectorAll(".favorite-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        toggleFavorite(button.dataset.movieId);
+      });
     });
-  });
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  }
 });
