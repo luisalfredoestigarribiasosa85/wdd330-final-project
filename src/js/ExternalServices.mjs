@@ -32,7 +32,7 @@ export default class ExternalServices {
             const data = await response.json();
             console.log('Got initial movie data');
 
-            const totalPages = Math.min(data.total_pages, 500); // TMDB API has a limit of 500 pages
+            const totalPages = Math.min(data.total_pages, 500);
             const randomPage = Math.floor(Math.random() * totalPages) + 1;
             console.log('Selected random page:', randomPage);
 

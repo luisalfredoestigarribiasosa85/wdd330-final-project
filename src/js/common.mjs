@@ -42,7 +42,7 @@ export async function initializeCommon() {
             return;
         }
 
-        // Add event listeners for the hamburger menu
+        // Add event listener for the hamburger menu
         const hamburger = document.querySelector('.hamburger');
         const nav = document.querySelector('.nav-menu');
 
